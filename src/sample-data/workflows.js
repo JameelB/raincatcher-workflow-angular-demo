@@ -1,7 +1,7 @@
 var riskAssessmentForm = 'asdasdas<form> </form>';
 
 
-module.exports = function getSampleData() {
+module.exports = function getSampleWorkflows() {
 
   var workflows = [
     { id: "HJ8QkzOSH", title: 'Static forms', steps: [

@@ -1,4 +1,5 @@
-var sampleData = require('./sample_data')();
+var sampleWorkflows = require('../sample-data/workflows')();
+var sampleWorkorders = require('../sample-data/workorders')();
 var CONSTANTS = require('./constants');
 
 function unsubscribeAll(mediator) {
@@ -17,19 +18,19 @@ function setupSubscribers(mediator, $scope) {
   mediator.subscribe(CONSTANTS.WORKFLOWS.CREATE, function(data) {
     data.workflowToCreate = JSON.parse(angular.toJson(data.workflowToCreate));
     data.workflowToCreate.id = data.topicUid;
-    sampleData.push(data.workflowToCreate);
+    sampleWorkflows.push(data.workflowToCreate);
     mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKFLOWS.CREATE + ':' + data.topicUid, data.workflowToCreate);
   });
 
   mediator.subscribeForScope(CONSTANTS.WORKFLOWS.READ, $scope,function(data) {
-    var obj = _.find(sampleData, function(obj) {
+    var obj = _.find(sampleWorkflows, function(obj) {
       return obj.id == data.topicUid;
     });
     mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKFLOWS.READ + ':' + data.topicUid, obj)
   });
 
   mediator.subscribe(CONSTANTS.WORKFLOWS.UPDATE, function(data) {
-    sampleData.forEach(function(obj) {
+    sampleWorkflows.forEach(function(obj) {
       if(obj.id === data.topicUid) {
         obj = data.workflowToUpdate;
       }
@@ -38,29 +39,29 @@ function setupSubscribers(mediator, $scope) {
   });
 
   mediator.subscribe(CONSTANTS.WORKFLOWS.DELETE, function(data) {
-    sampleData = sampleData.filter(function(obj) {
+    sampleWorkflows = sampleWorkflows.filter(function(obj) {
       return obj.id !== data.topicUid;
     });
     mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKFLOWS.DELETE + ':'+ data.topicUid, data.topicUid);
   });
 
   mediator.subscribe(CONSTANTS.WORKFLOWS.LIST, function() {
-    console.log('>>>>>>>data', sampleData);
-    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKFLOWS.LIST, sampleData)
+    console.log('>>>>>>>data', sampleWorkflows);
+    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKFLOWS.LIST, sampleWorkflows)
   });
 
 
   //Subscribers for results, workorders and appforms
   mediator.subscribe(CONSTANTS.RESULTS.LIST, function() {
-    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.RESULTS.LIST, ['a', '2', 'c'])
+    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.RESULTS.LIST, [])
   });
 
   mediator.subscribe(CONSTANTS.WORKORDERS.LIST, function() {
-    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKORDERS.LIST, [{}, {}, {}]);
+    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKORDERS.LIST, sampleWorkorders);
   });
 
   mediator.subscribe(CONSTANTS.APPFORMS.LIST, function() {
-    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.APPFORMS.LIST, [{}]);
+    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.APPFORMS.LIST, []);
   });
 
 }

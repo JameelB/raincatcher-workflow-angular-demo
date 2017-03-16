@@ -10,9 +10,9 @@ var adminConfig = {
 };
 
 var userConfig = {
-  mode: 'user',
-  toolbarViewId: 'toolbarView',
-  mainColumnViewId: 'detailColumnView'
+  mode: "user",
+  mainColumnViewId: "content@app",
+  toolbarViewId: "toolbar@app"
 };
 
 angular.module('app', [
@@ -20,8 +20,9 @@ angular.module('app', [
   require('angular-material'),
   require('ng-sortable'),
   require('fh-wfm-mediator'),
-  // require('fh-wfm-workflow-angular')(adminConfig)
-  require('fh-wfm-workflow-angular')(userConfig)
+  require('../workorders/workorder'),
+  require('fh-wfm-workflow-angular')(adminConfig)
+  // require('fh-wfm-workflow-angular')(userConfig)
 ]);
 
 
@@ -58,3 +59,8 @@ function AppConfig($stateProvider, $urlRouterProvider) {
 }
 
 angular.module('app').config(["$stateProvider", "$urlRouterProvider", AppConfig]);
+
+angular.module('app').run(function($state) {
+  require('../workorders/workorder');
+  console.log('>>>>>>>', $state.get());
+});
