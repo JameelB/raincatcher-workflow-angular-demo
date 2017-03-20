@@ -4,22 +4,31 @@ angular.module('app.workorder', [
 ])
 
 .config(function($stateProvider) {
+  var views = {};
+
+  views['column2'] = {
+      templateUrl: '/workorders/workorder.tpl.html',
+      controller: 'WorkordersCtrl as ctrl'
+  };
+
   $stateProvider
     .state('app.workorders', {
       url: '/workorders',
-      views: {
-        content: {
-          templateUrl: '/workorders/workorder.tpl.html',
-          controller: 'WorkordersCtrl as ctrl'
-        }
-      }
+      views: views
   });
 })
 
-.controller('WorkordersCtrl', function($scope, mediator) {
+.controller('WorkordersCtrl', function($scope, $state, mediator) {
   console.log('>>>>>>>workorders controller');
   $scope.workorders = getSampleWorkorders;
-  console.log('>>>>>>>scope workorders', $scope.workorders);
+
+
+  $scope.selectWorkorder = function(event, workorder) {
+    console.log('>>>>>>>selected workorder', workorder);
+    mediator.publish('wfm:ui:workflow:begin', workorder);
+    event.preventDefault();
+    event.stopPropagation();
+  }
 });
 
 module.exports = 'app.workorder';

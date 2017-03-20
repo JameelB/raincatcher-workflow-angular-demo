@@ -4,15 +4,9 @@ var angular = require('angular');
 var mediatorSubscribers = require('./mediator-subscribers');
 
 var adminConfig = {
-  mode: "user",
-  listColumnViewId: "column2",
-  mainColumnViewId: "content@app"
-};
-
-var userConfig = {
-  mode: "user",
-  mainColumnViewId: "content@app",
-  toolbarViewId: "toolbar@app"
+  mode: 'admin',
+  listColumnViewId: 'column2',
+  mainColumnViewId: 'content@app'
 };
 
 angular.module('app', [
@@ -22,7 +16,6 @@ angular.module('app', [
   require('fh-wfm-mediator'),
   require('../workorders/workorder'),
   require('fh-wfm-workflow-angular')(adminConfig)
-  // require('fh-wfm-workflow-angular')(userConfig)
 ]);
 
 
