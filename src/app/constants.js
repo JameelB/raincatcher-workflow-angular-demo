@@ -5,7 +5,11 @@ module.exports = {
     READ: 'wfm:workflows:read',
     UPDATE: 'wfm:workflows:update',
     DELETE: 'wfm:workflows:remove',
-    LIST: 'wfm:workflows:list'
+    LIST: 'wfm:workflows:list',
+    STEP: {
+      SUMMARY: 'wfm:workflows:step:summary',
+      BEGIN: 'wfm:workflows:step:begin'
+    }
   },
   WORKORDERS: {
     LIST: 'wfm:workorders:list'

@@ -1,5 +1,7 @@
+var shortid = require('shortid');
 var sampleWorkflows = require('../sample-data/workflows')();
 var sampleWorkorders = require('../sample-data/workorders')();
+var sampleResults = [];
 var CONSTANTS = require('./constants');
 
 function unsubscribeAll(mediator) {
@@ -53,7 +55,7 @@ function setupSubscribers(mediator, $scope) {
 
   //Subscribers for results, workorders and appforms
   mediator.subscribe(CONSTANTS.RESULTS.LIST, function() {
-    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.RESULTS.LIST, [])
+    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.RESULTS.LIST, sampleResults);
   });
 
   mediator.subscribe(CONSTANTS.WORKORDERS.LIST, function() {
@@ -64,6 +66,60 @@ function setupSubscribers(mediator, $scope) {
     mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.APPFORMS.LIST, []);
   });
 
+  //Subscribers for Workflow process
+  mediator.subscribe(CONSTANTS.WORKFLOWS.STEP.SUMMARY, function(data) {
+    var workorder = _.find(sampleWorkorders, function(obj) {
+      return obj.id === data.workorderId;
+    });
+
+    var workflow = _.find(sampleWorkflows, function(obj) {
+      return obj.id === workorder.workflowId;
+    });
+
+    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKFLOWS.STEP.SUMMARY + ':' + data.topicUid, {
+      workorder: workorder,
+      workflow: workflow,
+      status: 'New',
+      nextStepIndex: 0,
+      result: []
+    })
+  });
+
+  mediator.subscribe(CONSTANTS.WORKFLOWS.STEP.BEGIN, function(data) {
+    //TODO
+    var result = _.find(sampleResults, function(obj) {
+      return obj.workorderId === data.workorderId;
+    });
+
+    if(!result) {
+      result = {};
+      result.id = shortid.generate();
+      result.workorderId = data.workorderId;
+      result.nextStepIndex = 0;
+      result.stepResults = {};
+      result.status = 'In Progress';
+
+      console.log('New Result Added ', result);
+      sampleResults.push(result);
+    }
+
+
+    var workorder = _.find(sampleWorkorders, function(obj) {
+      return obj.id === data.workorderId;
+    });
+
+    var workflow = _.find(sampleWorkflows, function(obj) {
+      return obj.id === workorder.workflowId;
+    });
+
+    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKFLOWS.STEP.BEGIN + ':' + data.topicUid, {
+      workorder: workorder,
+      workflow: workflow,
+      result: result,
+      nextStepIndex: result.nextStepIndex,
+      step: result.nextStepIndex > -1 ? workflow.steps[result.nextStepIndex] : workflow.steps[0]
+    });
+  });
 }
 
 module.exports = {
