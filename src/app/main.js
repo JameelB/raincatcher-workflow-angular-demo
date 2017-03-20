@@ -2,8 +2,9 @@
 
 var angular = require('angular');
 var mediatorSubscribers = require('./mediator-subscribers');
+var mediator = require('fh-wfm-mediator/lib/mediator');
 
-var adminConfig = {
+var config = {
   mode: 'admin',
   listColumnViewId: 'column2',
   mainColumnViewId: 'content@app'
@@ -15,7 +16,8 @@ angular.module('app', [
   require('ng-sortable'),
   require('fh-wfm-mediator'),
   require('../workorders/workorder'),
-  require('fh-wfm-workflow-angular')(adminConfig)
+  require('fh-wfm-risk-assessment'),
+  require('fh-wfm-workflow-angular')(config)
 ]);
 
 

@@ -8,7 +8,8 @@ module.exports = {
     LIST: 'wfm:workflows:list',
     STEP: {
       SUMMARY: 'wfm:workflows:step:summary',
-      BEGIN: 'wfm:workflows:step:begin'
+      BEGIN: 'wfm:workflows:step:begin',
+      COMPLETE: 'wfm:workflows:step:complete'
     }
   },
   WORKORDERS: {

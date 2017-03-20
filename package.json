@@ -1,7 +1,7 @@
 {
   "name": "raincatcher-demo-workflow-angular",
   "version": "1.0.0",
-  "description": "Standalone test of raincatcher-workflow-angular",
+  "description": "Standalone demo of raincatcher-workflow-angular",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -25,6 +25,7 @@
     "express": "4.14.0",
     "fh-js-sdk": "2.18.4",
     "fh-wfm-mediator": "0.3.1",
+    "fh-wfm-risk-assessment": "0.0.16",
     "fh-wfm-workflow-angular": "0.1.0",
     "lodash": "4.7.0",
     "mediator-js": "^0.9.9",

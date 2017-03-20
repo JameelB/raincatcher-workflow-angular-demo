@@ -68,6 +68,19 @@ function setupSubscribers(mediator, $scope) {
 
   //Subscribers for Workflow process
   mediator.subscribe(CONSTANTS.WORKFLOWS.STEP.SUMMARY, function(data) {
+    var result = _.find(sampleResults, function(obj) {
+      return obj.workorderId === data.workorderId;
+    });
+
+    if(!result) {
+      result = {};
+      result.id = shortid.generate();
+      result.workorderId = data.workorderId;
+      result.nextStepIndex = 0;
+      result.stepResults = {};
+      result.status = 'New';
+    }
+
     var workorder = _.find(sampleWorkorders, function(obj) {
       return obj.id === data.workorderId;
     });
@@ -79,9 +92,9 @@ function setupSubscribers(mediator, $scope) {
     mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKFLOWS.STEP.SUMMARY + ':' + data.topicUid, {
       workorder: workorder,
       workflow: workflow,
-      status: 'New',
-      nextStepIndex: 0,
-      result: []
+      status: result.status,
+      nextStepIndex: result.nextStepIndex,
+      result: result
     })
   });
 
@@ -90,10 +103,9 @@ function setupSubscribers(mediator, $scope) {
     var result = _.find(sampleResults, function(obj) {
       return obj.workorderId === data.workorderId;
     });
-
+    console.log('>>>>>>>', result);
     if(!result) {
       result = {};
-      result.id = shortid.generate();
       result.workorderId = data.workorderId;
       result.nextStepIndex = 0;
       result.stepResults = {};
@@ -119,6 +131,41 @@ function setupSubscribers(mediator, $scope) {
       nextStepIndex: result.nextStepIndex,
       step: result.nextStepIndex > -1 ? workflow.steps[result.nextStepIndex] : workflow.steps[0]
     });
+  });
+
+  mediator.subscribe(CONSTANTS.WORKFLOWS.STEP.COMPLETE, function(data) {
+    console.log('>>>>>>>', data);
+    console.log('>>>>>>>', sampleResults);
+
+    var result = _.find(sampleResults, function(obj) {
+      return obj.workorderId === data.workorderId;
+    });
+
+    var workorder = _.find(sampleWorkorders, function(obj) {
+      return obj.id === data.workorderId;
+    });
+
+    var workflow = _.find(sampleWorkflows, function(obj) {
+      return obj.id === workorder.workflowId;
+    });
+
+    result.nextStepIndex = _.findIndex(workflow.steps, function(obj) { return obj.code === data.stepCode}) + 1;
+    result.stepResults[data.stepCode] = data.submission;
+
+    console.log('>>>>>>>', result.nextStepIndex, workflow.steps.length);
+    if(result.nextStepIndex >= workflow.steps.length) {
+      console.log('>>>>>>>set result status to complete' );
+      result.status = 'Complete';
+    }
+
+    mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKFLOWS.STEP.COMPLETE + ':' + data.topicUid, {
+      workorder: workorder,
+      workflow: workflow,
+      result: result,
+      nextStepIndex: result.nextStepIndex,
+      step: result.nextStepIndex > -1 ? workflow.steps[result.nextStepIndex] : workflow.steps[0]
+    })
+
   });
 }
 
