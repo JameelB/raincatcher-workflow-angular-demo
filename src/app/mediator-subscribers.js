@@ -13,6 +13,9 @@ function unsubscribeAll(mediator) {
   mediator.remove(CONSTANTS.WORKORDERS.LIST);
   mediator.remove(CONSTANTS.RESULTS.LIST);
   mediator.remove(CONSTANTS.APPFORMS.LIST);
+  mediator.remove(CONSTANTS.WORKFLOWS.STEP.SUMMARY);
+  mediator.remove(CONSTANTS.WORKFLOWS.STEP.BEGIN);
+  mediator.remove(CONSTANTS.WORKFLOWS.STEP.COMPLETE);
 }
 //Mock Subscribers for workflow mediator topics
 function setupSubscribers(mediator, $scope) {
@@ -48,7 +51,8 @@ function setupSubscribers(mediator, $scope) {
   });
 
   mediator.subscribe(CONSTANTS.WORKFLOWS.LIST, function() {
-    console.log('>>>>>>>data', sampleWorkflows);
+    console.log('>>>>>>>DATA', sampleWorkflows);
+    console.log('>>>>>>>RESULTS', sampleResults);
     mediator.publish(CONSTANTS.DONE_PREFIX + CONSTANTS.WORKFLOWS.LIST, sampleWorkflows)
   });
 
@@ -103,7 +107,7 @@ function setupSubscribers(mediator, $scope) {
     var result = _.find(sampleResults, function(obj) {
       return obj.workorderId === data.workorderId;
     });
-    console.log('>>>>>>>', result);
+
     if(!result) {
       result = {};
       result.workorderId = data.workorderId;
@@ -111,7 +115,6 @@ function setupSubscribers(mediator, $scope) {
       result.stepResults = {};
       result.status = 'In Progress';
 
-      console.log('New Result Added ', result);
       sampleResults.push(result);
     }
 
@@ -134,9 +137,6 @@ function setupSubscribers(mediator, $scope) {
   });
 
   mediator.subscribe(CONSTANTS.WORKFLOWS.STEP.COMPLETE, function(data) {
-    console.log('>>>>>>>', data);
-    console.log('>>>>>>>', sampleResults);
-
     var result = _.find(sampleResults, function(obj) {
       return obj.workorderId === data.workorderId;
     });
@@ -152,9 +152,7 @@ function setupSubscribers(mediator, $scope) {
     result.nextStepIndex = _.findIndex(workflow.steps, function(obj) { return obj.code === data.stepCode}) + 1;
     result.stepResults[data.stepCode] = data.submission;
 
-    console.log('>>>>>>>', result.nextStepIndex, workflow.steps.length);
     if(result.nextStepIndex >= workflow.steps.length) {
-      console.log('>>>>>>>set result status to complete' );
       result.status = 'Complete';
     }
 

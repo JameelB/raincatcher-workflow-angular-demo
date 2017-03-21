@@ -2,7 +2,6 @@
 
 var angular = require('angular');
 var mediatorSubscribers = require('./mediator-subscribers');
-var mediator = require('fh-wfm-mediator/lib/mediator');
 
 var config = {
   mode: 'admin',
@@ -54,8 +53,3 @@ function AppConfig($stateProvider, $urlRouterProvider) {
 }
 
 angular.module('app').config(["$stateProvider", "$urlRouterProvider", AppConfig]);
-
-angular.module('app').run(function($state) {
-  require('../workorders/workorder');
-  console.log('>>>>>>>', $state.get());
-});

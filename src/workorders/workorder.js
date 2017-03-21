@@ -19,12 +19,10 @@ angular.module('app.workorder', [
 })
 
 .controller('WorkordersCtrl', function($scope, $state, mediator) {
-  console.log('>>>>>>>workorders controller');
   $scope.workorders = getSampleWorkorders;
 
 
   $scope.selectWorkorder = function(event, workorder) {
-    console.log('>>>>>>>selected workorder', workorder);
     mediator.publish('wfm:ui:workflow:begin', workorder);
     event.preventDefault();
     event.stopPropagation();
